@@ -1,0 +1,4 @@
+Request_id,Channel     Avg CPS - Cost/shipment    Capacity/hours
+101,Fquick_FE,18,100
+101,Fquick_LE,19,50
+101,ADM,14,80

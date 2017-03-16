@@ -1,0 +1,72 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    test {
+        afterTest { desc, result ->
+            println "[TEST] ${desc.className} - ${desc.name} : ${result}"
+        }
+        jvmArgs = ["-noverify"]
+    }
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    sourceSets {
+        generated {
+            java {
+                srcDirs = ['src/main/generated']
+            }
+        }
+    }
+
+    repositories {
+        mavenCentral()
+
+    }
+
+
+    dependencies {
+    }
+
+    idea {
+        module {
+            sourceDirs += file('src/main/generated')
+        }
+    }
+}
+
+allprojects {
+    task hello << {
+        task ->
+            println "++++++++++++++++++++++++\n" +
+                    "PROJECT $task.project.name \n" +
+                    "VERSION ${version} \n" +
+                    "BUILD DIR $task.project.buildDir \n" +
+                    "++++++++++++++++++++++++"
+    }
+    apply plugin: 'idea'
+}
+
+task build {
+    println('Hi There !! Building gradle sub projects')
+    hello.execute()
+}
+
+//clean {
+//    delete "target"
+//}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.6'
+}
+group 'com.capacity.planning'
+version '1.0-SNAPSHOT'

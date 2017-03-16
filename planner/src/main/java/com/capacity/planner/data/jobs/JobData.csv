@@ -1,0 +1,13 @@
+Request_id,shipment-id,shipment details,usecase
+101,1,{"shipment_type":["NORMAL"],"cod":"true","amount":1000},Forward_Delivery
+101,1,{"shipment_type":["NORMAL"],"cod":"true","amount":1000},Forward_Delivery
+101,1,{"shipment_type":["NORMAL"],"cod":"true","amount":1000},Forward_Delivery
+101,1,{"shipment_type":["NORMAL"],"cod":"true","amount":1000},Forward_Delivery
+101,1,{"shipment_type":["NORMAL"],"cod":"true","amount":1000},Forward_Delivery
+101,1,{"shipment_type":["NORMAL"],"cod":"true","amount":1000},Forward_Delivery
+101,1,{"shipment_type":["NORMAL"],"cod":"true","amount":1000},Forward_Delivery
+101,1,{"shipment_type":["NORMAL"],"cod":"true","amount":1000},Forward_Delivery
+101,1,{"shipment_type":["NORMAL"],"cod":"true","amount":1000},Forward_Delivery
+101,1,{"shipment_type":["NORMAL"],"cod":"true","amount":1000},Forward_Delivery
+101,1,{"shipment_type":["NORMAL"],"cod":"true","amount":1000},Forward_Delivery
+101,1,{"shipment_type":["NORMAL"],"cod":"true","amount":1000},Forward_Delivery

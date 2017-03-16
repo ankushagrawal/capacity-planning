@@ -1,0 +1,3 @@
+Channel     Usecase             Constraints
+Fquick_FE,Forward_delivery,{"cod":"true","cod_amount_limit":2000}
+Fquick_LE,Forward_delivery,{"shipment_type":["NORMAL","REGULAR"],"cod":"true","cod_amount_limit":1000}
