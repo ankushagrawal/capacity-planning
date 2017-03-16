@@ -56,11 +56,6 @@ allprojects {
     apply plugin: 'idea'
 }
 
-task build {
-    println('Hi There !! Building gradle sub projects')
-    hello.execute()
-}
-
 task wrapper(type: Wrapper) {
     gradleVersion = '2.6'
 }
