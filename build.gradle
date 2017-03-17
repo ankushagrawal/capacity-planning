@@ -10,6 +10,7 @@ buildscript {
 subprojects {
     apply plugin: 'java'
     apply plugin: 'idea'
+//    bootRepackage.enabled = false
     test {
         afterTest { desc, result ->
             println "[TEST] ${desc.className} - ${desc.name} : ${result}"

@@ -30,21 +30,39 @@ public class ResourceAllocationEngine implements Engine {
 
         //input needed
         //work array, supply array, cost matrix needed
-        int[] demand = {10,10,10,10};
-        int[] supply = {12,17,11};
-        int[][] costs = {{500,750,300,450}, {650,800,400,600},
-                {400,700,500,550}};
+        int[] demand = {200,100,300};
+        int[] supply = {150,175,275};
+        int[][] costs = {{6,8,10}, {7,11,11},
+                {4,5,12}};
+
+//        int[] demand = {10,10,10,10};
+//        int[] supply = {12,17,11};
+//        int[][] costs = {{500,750,300,450}, {650,800,400,600},
+//                {400,700,500,550}};
         try {
             int[][] result = new VogelMethod().executeVogelMethod(demand, supply, costs);
             stream(result).forEach(a -> System.out.println(Arrays.toString(a)));
 
             int[][] ModiResult = new ModiMethod().optimizeAllocations(result,costs,demand,supply);
+            printCost(result,costs,demand,supply);
+            stream(result).forEach(a -> System.out.println(Arrays.toString(a)));
+
         }catch (Exception e){
             e.printStackTrace();
         }
     }
 
-
+    private void printCost(int[][] result, int[][] costs,int[] demand, int[] supply) {
+        long cost = 0;
+        for(int i =0;i<supply.length;i++){
+            for(int j = 0; j<demand.length;j++){
+                if(result[i][j]>0) {
+                    cost = cost + costs[i][j] * result[i][j];
+                }
+            }
+        }
+        System.out.println("Cost is : "+cost);
+    }
 
 
 }

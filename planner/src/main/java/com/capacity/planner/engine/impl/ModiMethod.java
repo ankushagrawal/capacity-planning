@@ -3,6 +3,7 @@ package com.capacity.planner.engine.impl;
 import Jama.Matrix;
 
 import java.util.Arrays;
+import java.util.Queue;
 
 import static java.util.Arrays.stream;
 
@@ -38,37 +39,268 @@ public class ModiMethod {
                 return result;
             }
         }
-        return new int[0][0];
+        return result;
     }
 
     private int[][] reallocateJobs(double[][] unallocatedMatrix, int[][] result,int[] index,int nRows, int nCols) {
         //paths available are RTLD, RDRU , LTRD, LDLU
 
-        int[] newIndex = new int[2];
-        newIndex[0] = index[0];
-        newIndex[1] = index[1];
-
         if(index[1] == 0){
             //it is first column, only movements are RIGHT viz. RTLD, RDRU
-            for(int step = 1;step<=nCols-index[1];step++) {
-                newIndex = checkRightMovement(step, unallocatedMatrix);
+            int step = 1;
+
+            if(!doRTLD(result,index,step,unallocatedMatrix)){
+                doRDRU(result,index,step,unallocatedMatrix);
             }
         }
         else if(index[1] == nCols-1){
             //it is last column, only movements are LEFT viz.  LTRD, LDLU
-
+            int step = 1;
+            if(!doLTRD(result, index, step, unallocatedMatrix)){
+                doLDLU(result, index, step, unallocatedMatrix);
+            }
         }
         else{
             //all possible movements
+            int step = 1;
+
+            if(!doRTLD(result,index,step,unallocatedMatrix)){
+                if(!doRDRU(result,index,step,unallocatedMatrix)){
+                    if(!doLTRD(result, index, step, unallocatedMatrix)){
+                        if(!doLDLU(result, index, step, unallocatedMatrix)){
+                            //TODO: now we have to chnage step length....
+                        }
+                    }
+                }
+            }
+
         }
-
-
-
-        return new int[0][];
+        return result;
     }
 
-    private int[] checkRightMovement(int step, double[][] unallocatedMatrix) {
-        return new int[0];
+    private boolean doLDLU(int[][] result, int[] index, int step, double[][] unallocatedMatrix) {
+        int[] newIndex = initializeNewIndex(index);
+        LoopDirection direction = initializeLoopDirection(index);
+        if(checkLeftMovement(step, unallocatedMatrix, newIndex)) {
+            newIndex[1] = newIndex[1] - step;
+            setDirection(direction, newIndex,1);
+
+            if(checkDownMovement(step, unallocatedMatrix, newIndex)){
+                newIndex[0] = newIndex[0] + step;
+                setDirection(direction, newIndex,2);
+                if(checkLeftMovement(step,unallocatedMatrix,newIndex)){
+                    newIndex[1] =  newIndex[1] - step;
+                    setDirection(direction, newIndex,3);
+                    //found a close loop
+                    //path is RTLD with step 1
+                    result = redistribute(direction, result);
+                    return true;
+
+                }
+                else
+                    return false;
+            }
+            else
+                return false;
+        }
+        else{
+            return false;
+        }
+    }
+
+    private boolean doLTRD(int[][] result, int[] index, int step, double[][] unallocatedMatrix) {
+        int[] newIndex = initializeNewIndex(index);
+        LoopDirection direction = initializeLoopDirection(index);
+        if(checkLeftMovement(step, unallocatedMatrix, newIndex)) {
+            newIndex[1] = newIndex[1] - step;
+            setDirection(direction, newIndex,1);
+
+            if(checkTopMovement(step, unallocatedMatrix, newIndex)){
+                newIndex[0] = newIndex[0] - step;
+                setDirection(direction, newIndex,2);
+                if(checkRightMovement(step,unallocatedMatrix,newIndex)){
+                    newIndex[1] =  newIndex[1] + step;
+                    setDirection(direction, newIndex,3);
+                    //found a close loop
+                    //path is RTLD with step 1
+                    result = redistribute(direction, result);
+                    return true;
+
+                }
+                else
+                    return false;
+            }
+            else
+                return false;
+        }
+        else{
+            return false;
+        }
+    }
+
+    private boolean doRDRU(int[][] result, int[] index, int step, double[][] unallocatedMatrix) {
+        int[] newIndex = initializeNewIndex(index);
+        LoopDirection direction = initializeLoopDirection(index);
+        if(checkRightMovement(step, unallocatedMatrix,newIndex)) {
+            newIndex[1] = step + newIndex[1];
+            setDirection(direction, newIndex,1);
+
+            if(checkDownMovement(step,unallocatedMatrix,newIndex)){
+                newIndex[0] = newIndex[0] + step;
+                setDirection(direction, newIndex,2);
+                if(checkRightMovement(step,unallocatedMatrix,newIndex)){
+                    newIndex[1] =  newIndex[1] + step;
+                    setDirection(direction, newIndex,3);
+                    //found a close loop
+                    //path is RTLD with step 1
+                    result = redistribute(direction, result);
+                    return true;
+
+                }
+                else
+                    return false;
+            }
+            else
+                return false;
+        }
+        else{
+            return false;
+        }
+    }
+
+    private boolean doRTLD(int[][] result, int[] index,int step,double[][] unallocatedMatrix) {
+        int[] newIndex = initializeNewIndex(index);
+        LoopDirection direction = initializeLoopDirection(index);
+        if(checkRightMovement(step, unallocatedMatrix,newIndex)) {
+            newIndex[1] = step + newIndex[1];
+            setDirection(direction, newIndex,1);
+
+            if(checkTopMovement(step,unallocatedMatrix,newIndex)){
+                newIndex[0] = newIndex[0] - step;
+                setDirection(direction, newIndex,2);
+                if(checkLeftMovement(step,unallocatedMatrix,newIndex)){
+                    newIndex[1] =  newIndex[1] - step;
+                    setDirection(direction, newIndex,3);
+                    //found a close loop
+                    //path is RTLD with step 1
+                    result = redistribute(direction, result);
+                    return true;
+
+                }
+                else
+                    return false;
+            }
+            else
+                return false;
+        }
+        else{
+            return false;
+        }
+    }
+
+    private int[] initializeNewIndex(int[] index) {
+        int[] newIndex = new int[2];
+        newIndex[0] = index[0];
+        newIndex[1] = index[1];
+        return newIndex;
+    }
+
+    private LoopDirection initializeLoopDirection(int[] index) {
+        LoopDirection direction = new LoopDirection();
+        Coordinate coordinate = new Coordinate();
+        coordinate.setRowIndex(index[0]);
+        coordinate.setColumnIndex(index[1]);
+        direction.setStartPosition(coordinate);
+        return direction;
+    }
+
+    private int[][] redistribute(LoopDirection direction, int[][] result) {
+        //get minimumn from 1st and 3rd position
+        System.out.println(" loop direction : " + direction);
+        if(result[direction.getFirstStop().getRowIndex()][direction.getFirstStop().getColumnIndex()] <
+                result[direction.getThirdStop().getRowIndex()][direction.getThirdStop().getColumnIndex()]){
+            //1st position has minimum allocation
+            int minCapacity = result[direction.getFirstStop().getRowIndex()][direction.getFirstStop().getColumnIndex()];
+            result[direction.getFirstStop().getRowIndex()][direction.getFirstStop().getColumnIndex()] = 0;
+            result[direction.getThirdStop().getRowIndex()][direction.getThirdStop().getColumnIndex()] =
+                    result[direction.getThirdStop().getRowIndex()][direction.getThirdStop().getColumnIndex()] - minCapacity;
+
+            result[direction.getStartPosition().getRowIndex()][direction.getStartPosition().getColumnIndex()] = minCapacity;
+
+            result[direction.getSecondStop().getRowIndex()][direction.getSecondStop().getColumnIndex()] =
+                    result[direction.getSecondStop().getRowIndex()][direction.getSecondStop().getColumnIndex()] + minCapacity;
+
+
+        }
+        else{
+            int minCapacity = result[direction.getThirdStop().getRowIndex()][direction.getThirdStop().getColumnIndex()];
+            result[direction.getThirdStop().getRowIndex()][direction.getThirdStop().getColumnIndex()] = 0;
+
+            result[direction.getFirstStop().getRowIndex()][direction.getFirstStop().getColumnIndex()] =
+                    result[direction.getFirstStop().getRowIndex()][direction.getFirstStop().getColumnIndex()] - minCapacity;
+
+            result[direction.getStartPosition().getRowIndex()][direction.getStartPosition().getColumnIndex()] = minCapacity;
+
+            result[direction.getSecondStop().getRowIndex()][direction.getSecondStop().getColumnIndex()] =
+                    result[direction.getSecondStop().getRowIndex()][direction.getSecondStop().getColumnIndex()] + minCapacity;
+
+        }
+        return result;
+    }
+
+    private void setDirection(LoopDirection direction, int[] newIndex, int stop) {
+        Coordinate coordinate = new Coordinate();
+        coordinate.setRowIndex(newIndex[0]);
+        coordinate.setColumnIndex(newIndex[1]);
+        if(stop == 1)
+            direction.setFirstStop(coordinate);
+        else if(stop == 2)
+            direction.setSecondStop(coordinate);
+        else direction.setThirdStop(coordinate);
+    }
+
+    private boolean checkLeftMovement(int step, double[][] unallocatedMatrix, int[] index) {
+        try {
+            if (unallocatedMatrix[index[0]][index[1] - step] == 0) {
+                return true;
+            }
+        }catch (Exception e){
+            return false;
+        }
+        return false;
+    }
+
+    private boolean checkDownMovement(int step, double[][] unallocatedMatrix, int[] index) {
+        try {
+            if (unallocatedMatrix[index[0]+step][index[1] ] == 0) {
+                return true;
+            }
+        }catch (Exception e) {
+            return false;
+        }
+        return false;
+    }
+
+    private boolean checkTopMovement(int step, double[][] unallocatedMatrix, int[] index) {
+        try {
+            if (unallocatedMatrix[index[0]-step][index[1] ] == 0) {
+                return true;
+            }
+        }catch (Exception e) {
+            return false;
+        }
+        return false;
+    }
+
+    private boolean checkRightMovement(int step, double[][] unallocatedMatrix,int[] index) {
+        try {
+            if (unallocatedMatrix[index[0]][index[1] + step] == 0) {
+                return true;
+            }
+        }catch (Exception e){
+            return false;
+        }
+        return false;
     }
 
     private int[] checkAndReturnMaximumPenaltyCell(double[][] unallocatedMatrix,int nRows, int nCols) {
