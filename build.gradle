@@ -19,6 +19,7 @@ dependencies {
     compile group: 'io.dropwizard', name: 'dropwizard-db', version: '1.0.6' //no 1.1.0
     compile group: 'dom4j', name: 'dom4j', version: '1.6.1'
     compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.12.2'
 }
 
 allprojects {

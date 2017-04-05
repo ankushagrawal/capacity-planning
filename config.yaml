@@ -14,7 +14,7 @@ database:
     hibernate.show_sql: true
     hibernate.format_sql: true
     hibernate.jdbc.batch_size: 200
-    hibernate.hbm2ddl.auto: create
+    hibernate.hbm2ddl.auto: update
     hibernate.cache.use_second_level_cache: false
     hibernate.hikari.maximumPoolSize: 20
     hibernate.hikari.idleTimeout: 60000
