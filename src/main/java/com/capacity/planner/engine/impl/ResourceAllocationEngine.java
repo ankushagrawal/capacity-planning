@@ -5,9 +5,6 @@ import Jama.Matrix;
 import com.capacity.planner.engine.Engine;
 
 import java.util.Arrays;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import static java.util.Arrays.stream;
 
@@ -30,15 +27,15 @@ public class ResourceAllocationEngine implements Engine {
 
         //input needed
         //work array, supply array, cost matrix needed
-        int[] demand = {200,100,300};
-        int[] supply = {150,175,275};
-        int[][] costs = {{6,8,10}, {7,11,11},
-                {4,5,12}};
+//        int[] demand = {200,100,300};
+//        int[] supply = {150,175,275};
+//        int[][] costs = {{6,8,10}, {7,11,11},
+//                {4,5,12}};
 
-//        int[] demand = {10,10,10,10};
-//        int[] supply = {12,17,11};
-//        int[][] costs = {{500,750,300,450}, {650,800,400,600},
-//                {400,700,500,550}};
+        int[] demand = {10,10,10,10};
+        int[] supply = {12,17,11};
+        int[][] costs = {{500,750,300,450}, {650,800,400,600},
+                {400,700,500,550}};
         try {
             int[][] result = new VogelMethod().executeVogelMethod(demand, supply, costs);
             stream(result).forEach(a -> System.out.println(Arrays.toString(a)));

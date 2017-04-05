@@ -1,64 +1,60 @@
 apply plugin: 'java'
-apply plugin: 'idea'
+apply plugin: 'maven'
+apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
 
-buildscript {
-    repositories {
+sourceCompatibility = 1.8
+version = '1.0'
+
+repositories {
         mavenCentral()
-    }
 }
 
-subprojects {
-    apply plugin: 'java'
-    apply plugin: 'idea'
-//    bootRepackage.enabled = false
-    test {
-        afterTest { desc, result ->
-            println "[TEST] ${desc.className} - ${desc.name} : ${result}"
-        }
-        jvmArgs = ["-noverify"]
-    }
+dependencies {
+    compile group: 'gov.nist.math', name: 'jama', version: '1.0.2' //used for matrix solver
+    testCompile group: 'junit', name: 'junit', version: '4.11'
 
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
-
-    sourceSets {
-        generated {
-            java {
-                srcDirs = ['src/main/generated']
-            }
-        }
-    }
-
-    repositories {
-        mavenCentral()
-
-    }
-
-
-    dependencies {
-    }
-
-    idea {
-        module {
-            sourceDirs += file('src/main/generated')
-        }
-    }
+    compile group: 'io.dropwizard', name: 'dropwizard-core', version: '1.1.0'
+    compile group: 'io.dropwizard', name: 'dropwizard-hibernate', version: '1.1.0'
+    compile group: 'io.dropwizard', name: 'dropwizard-db', version: '1.0.6' //no 1.1.0
+    compile group: 'dom4j', name: 'dom4j', version: '1.6.1'
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
 }
 
 allprojects {
-    task hello << {
-        task ->
-            println "++++++++++++++++++++++++\n" +
-                    "PROJECT $task.project.name \n" +
-                    "VERSION ${version} \n" +
-                    "BUILD DIR $task.project.buildDir \n" +
-                    "++++++++++++++++++++++++"
-    }
     apply plugin: 'idea'
+    group = 'com.capacity.planner'
+
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.6'
+mainClassName = 'com.capacity.planner.PlanningApplication'
+
+run {
+    args 'server', 'config.yaml'
 }
-group 'com.capacity.planning'
-version '1.0-SNAPSHOT'
+
+jar {
+    manifest.attributes("Main-Class": mainClassName)
+}
+
+buildscript {
+    repositories {
+        maven {
+            name 'Gradle Shadow'
+            url 'http://dl.bintray.com/content/johnrengelman/gradle-plugins'
+        }
+        maven { url 'http://repo1.maven.org/maven2' }
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.1.2'
+    }
+}
+
+shadowJar {
+    zip64  = true
+    mergeServiceFiles()
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+    exclude 'META-INF/*.SF'
+
+}
