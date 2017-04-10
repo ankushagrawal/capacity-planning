@@ -3,7 +3,6 @@ package com.capacity.planner.engine.impl;
 import Jama.Matrix;
 
 import java.util.Arrays;
-import java.util.Queue;
 
 import static java.util.Arrays.stream;
 

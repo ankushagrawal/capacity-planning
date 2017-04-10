@@ -1,0 +1,27 @@
+template: Hello, %s!
+
+defaultName: Stranger
+
+database:
+  driverClass: com.mysql.jdbc.Driver
+  user: root
+  password:
+  url: jdbc:mysql://localhost/capacity_planning?rewriteBatchedStatements=true
+  properties:
+    charSet: UTF-8
+    hibernate.dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    hibernate.connection.provider_class: com.zaxxer.hikari.hibernate.HikariConnectionProvider
+    hibernate.show_sql: false
+    hibernate.format_sql: false
+    hibernate.jdbc.batch_size: 200
+    hibernate.hbm2ddl.auto: update
+    hibernate.cache.use_second_level_cache: false
+    hibernate.hikari.maximumPoolSize: 20
+    hibernate.hikari.idleTimeout: 60000
+    hibernate.hikari.poolName: dropwizard_hibernate_pool
+    hibernate.hikari.connectionTimeout: 6000
+  maxWaitForConnection: 1s
+  validationQuery: "/* MyService Health Check */ SELECT 1"
+  minSize: 8
+  maxSize: 32
+  checkConnectionWhileIdle: false
