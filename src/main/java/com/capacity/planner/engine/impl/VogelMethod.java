@@ -11,7 +11,7 @@ import static java.util.Arrays.stream;
  * Created by ankush.a on 16/03/17.
  */
 public class VogelMethod {
-    static ExecutorService es = Executors.newFixedThreadPool(2);
+    static ExecutorService es = Executors.newFixedThreadPool(20);
 
     public int[][] executeVogelMethod(int[] demand, int[] supply, int[][] costs) throws Exception{
         final int nRows = supply.length;

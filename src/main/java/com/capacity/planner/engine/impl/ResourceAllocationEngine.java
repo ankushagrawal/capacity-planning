@@ -13,13 +13,22 @@ import static java.util.Arrays.stream;
  */
 public class ResourceAllocationEngine implements Engine {
 
+    private VogelMethod vogelMethod;
+    private ModiMethod modiMethod;
+
+    public ResourceAllocationEngine() {
+        vogelMethod = new VogelMethod();
+        modiMethod = new ModiMethod();
+    }
 
     public static void main(String[] args){
         new ResourceAllocationEngine().distribute(1L);
     }
 
     @Override
-    public void distribute(Long requestId) {
+    public void distribute(Long requestId) {}
+
+    public int[][] distribute(Long requestId,int[] demand, int[] supply, int[][] costs) {
         //get all jobs based on request id
         //get all sources based on request id
         //grouping of jobs based on filters constraint of sources
@@ -32,20 +41,22 @@ public class ResourceAllocationEngine implements Engine {
 //        int[][] costs = {{6,8,10}, {7,11,11},
 //                {4,5,12}};
 
-        int[] demand = {10,10,10,10};
-        int[] supply = {12,17,11};
-        int[][] costs = {{500,750,300,450}, {650,800,400,600},
-                {400,700,500,550}};
+//        int[] demand = {10,10,10,10};
+//        int[] supply = {12,17,11};
+//        int[][] costs = {{500,750,300,450}, {650,800,400,600},
+//                {400,700,500,550}};
         try {
-            int[][] result = new VogelMethod().executeVogelMethod(demand, supply, costs);
+            int[][] result = vogelMethod.executeVogelMethod(demand, supply, costs);
             stream(result).forEach(a -> System.out.println(Arrays.toString(a)));
 
-            int[][] ModiResult = new ModiMethod().optimizeAllocations(result,costs,demand,supply);
-            printCost(result,costs,demand,supply);
-            stream(result).forEach(a -> System.out.println(Arrays.toString(a)));
+            int[][] modiResult = modiMethod.optimizeAllocations(result,costs,demand,supply);
+            printCost(result, costs, demand, supply);
+            stream(modiResult).forEach(a -> System.out.println(Arrays.toString(a)));
+            return modiResult;
 
         }catch (Exception e){
             e.printStackTrace();
+            return null;
         }
     }
 
